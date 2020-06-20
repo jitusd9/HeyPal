@@ -81,7 +81,7 @@ export default class Postcard extends Component {
 
         const {likeCount} = this.state
 
-        let ifPhotos = this.props.photos ?  <img src={this.props.photos || 'https://via.placeholder.com/150'} alt="content-img" /> : null
+        let ifPhotos = this.props.photos === null ? null : <img src={this.props.photos || 'https://via.placeholder.com/150'} alt="content-img" />
 
         let deleteBtn = this.props.renderFrom === 'profile' ?  <button onClick={this.deletePost} id={this.props.postKey} className="tert-btn danger-btn">Delete</button> : null
         

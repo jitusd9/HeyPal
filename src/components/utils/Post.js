@@ -47,13 +47,6 @@ const timming = (time) => {
     return convdataTime;
 }
 
-const getPhotoUrl = (photoUrl) => {
-   
-    if(photoUrl === null){
-        return 'Loading...'
-    }
-        return photoUrl    
-}
 
 
 export class Post extends Component {
@@ -90,7 +83,7 @@ export class Post extends Component {
                 userName : username,
                 profilePicUrl : profileUrl,
                 timestamp : timming(timestamp),
-                photos : getPhotoUrl(photos)
+                photos
             })
         });
         this.setState({

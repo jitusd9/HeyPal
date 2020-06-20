@@ -40,85 +40,89 @@ export class Addpost extends Component {
 		}
 	};
 
-	// imageChange = (e) => {
-	//     if(e.target.files[0]){
-	//         const image = e.target.files[0];
-	//         this.setState({image})
-	//         // console.log('image state ', this.state.image.name, '& img upload');
-
-	//         return this.handleImage();
-
-	//     }else{
-	//         console.log('imageChange Error');
-	//     }
-	// }
-
-	handleImage = (e) => {
-		e.preventDefault();
-		if (e.target.files[0]) {
-			const image = e.target.files[0];
-			//    this.setState({image})
-			this.setState({
+	imageChange = (e) => {
+	    if(e.target.files[0]){
+	        const image = e.target.files[0];
+	        this.setState({
 				image,
+				btnClass : "tert-btn post-btn"
+			})
+	        // console.log('image state ', this.state.image.name);
+
+	        // return this.handleImage();
+
+	    }else{
+	        console.log('imageChange Error');
+		}
+		console.log('wait for 3s');
+		
+	}
+
+	handleImage = () => {
+			this.setState({
 				imageUploading: true,
 			});
 
 			// image uplaod
-
-			// const { image } = this.state;
+			const { image } = this.state;
 			const uid = getUserId();
+			console.log('trying get imga', image);
+			
 
-			const uploadTask = this.storage
-				.ref(`images/${uid}/${image.name}`)
-				.put(image);
-			// console.log( typeof uploadTask);
+			return new Promise((resolve, reject) => {
 
-			uploadTask.on(
-				"state_changed",
-				(snapshot) => {
-					// progress function
-					console.log(snapshot);
-					const progress = Math.round(
-						(snapshot.bytesTransferred / snapshot.totalBytes) * 100
+				if(image === null) {
+					resolve(null)
+				}else{
+					const uploadTask = this.storage
+					.ref(`images/${uid}/${image.name}`)
+					.put(image);
+					// console.log( typeof uploadTask);
+
+					uploadTask.on(
+						"state_changed",
+						(snapshot) => {
+							// progress function
+							console.log(snapshot);
+							const progress = Math.round(
+								(snapshot.bytesTransferred / snapshot.totalBytes) * 100
+							);
+							this.setState({ progress });
+						},
+						(error) => {
+							// error function
+							console.log('handleimg Err :', error);
+							reject(error);
+						},
+						() => {
+							// complete function
+							this.storage
+								.ref("images")
+								.child(image.name)
+								.getDownloadURL()
+								.then((url) => {
+									// console.log(url);
+									this.setState({
+										url,
+										image: null,
+									});
+									resolve(url);
+								});
+						}
 					);
-					this.setState({ progress });
-				},
-				(error) => {
-					// error function
-					console.log(error);
-				},
-				() => {
-					// complete function
-					this.storage
-						.ref("images")
-						.child(image.name)
-						.getDownloadURL()
-						.then((url) => {
-							// console.log(url);
-							this.setState({
-								url,
-								image: null,
-							});
-						});
+
 				}
-			);
+
+			});
+
+			
 
 			// unsubscribe();
-		}
+		
 	};
 
-	onSubmit = (e) => {
-		e.preventDefault();
-		if (this.state.content === "" && this.state.image === null) {
-			return alert("plese write something!");
-		}
-
+	uploadPost = (imgUrl) => {
 		const { content } = this.state;
-
-		this.setState({
-			imageUploading: false,
-		});
-
 		// text uplaod
 
 		this.unsubscribe = this.ref
@@ -126,10 +130,13 @@ export class Addpost extends Component {
 				userId: getUserId(),
 				content,
 				timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-				photos: this.state.url,
+				photos: imgUrl,
 			})
 			.then((docRef) => {
 				// console.log(`PostId :`,docRef.id);
+				this.setState({
+					btnClass: "tert-btn post-btn",
+				})
 
 				this.setState({
 					userId: "",
@@ -139,6 +146,36 @@ export class Addpost extends Component {
 				});
 			})
 			.catch((err) => console.log("Error Adding Document: ", err));
+
+	}
+
+	onSubmit = (e) => {
+		e.preventDefault();
+		if (this.state.content === "" && this.state.image === null) {
+			return alert("plese write something!");
+		}
+		this.setState({
+			btnClass: "tert-btn post-btn hide-btn",
+		})
+
+		this.handleImage()
+		.then(img => {
+			this.setState({
+				imageUploading: false,
+			});
+	
+			console.log('from OnSubmit img(url) :', img);
+
+			this.uploadPost(img);
+		})
+		.catch(error => {
+			console.log('from OnSubmit err :', error);
+			this.setState({
+				btnClass: "tert-btn post-btn",
+			})
+		})
+		
+
 	};
 
 	render() {
@@ -168,7 +205,7 @@ export class Addpost extends Component {
 								📷
 							</span>
 							<input
-								onChange={this.handleImage}
+								onChange={this.imageChange}
 								id="img-input"
 								value=""
 								name="pic"
