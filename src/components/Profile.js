@@ -1,11 +1,15 @@
 import React, { Component } from 'react'
+import {Link} from "react-router-dom"
 import firebase from "../Firebase"
 import { getProfilePicUrl, getUserName, getUserEmail } from "../components/utils/FirebaseAuth"
+import Post from './utils/Post'
 
 export class Profile extends Component {
+  
 
     constructor(props){
         super(props)
+        
         this.state = {
             user : null,
             emailBtn : 1,
@@ -17,16 +21,35 @@ export class Profile extends Component {
     }
 
     componentDidMount(){
-        firebase.auth().onAuthStateChanged(user=>{
+
+       
+      firebase.auth().onAuthStateChanged(user=>{
             if(user){
                 this.setState({user})
+                // email = user.email;
             }else{
                 this.setState({
                     user :null
                 })
             }
         })
+        
+        // let email = getUserEmail();
+        // const docRef = firebase.firestore().collection('posts').where("userEmail", "==", {email})
+        
+        // docRef.get().then((doc)=> {
+            
+        // }).catch(err => console.log(err))
+            
+          
+        
     }
+
+    componentWillUnmount(){
+        // Warnign says something to do in this method  : Unscribe 
+    }
+
+    
 
     handleEdit = (e) =>{
         let state = e.target.name;    
@@ -51,6 +74,10 @@ export class Profile extends Component {
     render() {
         const { btnState } = this.state;
         var saveEmailBtn, saveNameBtn
+        let userEmail = getUserEmail();
+        let userName = getUserName();
+        // temp to work 
+        let uid = '1543@4f12433' 
 
         if(btnState === 0){
             saveEmailBtn = <button name="emailBtn" className="edit-btn tert-btn" onClick={this.handleSave}>Save</button>
@@ -60,30 +87,35 @@ export class Profile extends Component {
             saveEmailBtn = <button name="emailBtn" className="edit-btn tert-btn" onClick={this.handleEdit}>Edit</button>
         }
 
-        
-
-        // if(this.state.user){
             return (
                 <div className="profile">
                     <div className="bio-panel">
-                    <div className="dp-img">
+                        <div className="dp-img">
                             <img src={getProfilePicUrl()} alt="DP"/>
                         </div>
-                    <div className="name-panel">
-                        <div className="edit" id="nameEdit">
-                        <form onSubmit={this.handleSave}>
-                        <h3>{getUserName()}</h3>
-                        </form>
-                            {saveNameBtn}
+                        <div className="name-panel">
+                            <div className="edit" id="nameEdit">
+                            <form onSubmit={this.handleSave}>
+                            <h1>{userName}</h1>
+                            </form>
+                                {saveNameBtn}
+                            </div>
+                            <div className="edit" id="emailEdit">
+                            <form onSubmit={this.handleSave}>
+                            <h4>{userEmail}</h4>
+                            </form>
+                                {saveEmailBtn}
+                            </div>
                         </div>
-                        <div className="edit" id="emailEdit">
-                        <form onSubmit={this.handleSave}>
-                        <h4>{getUserEmail()}</h4>
-                        </form>
-                            {saveEmailBtn}
-                        </div>
+                    </div> 
+                    <div className="tab-panel">
+                        <Link to={`${uid}/posts`}>Posts</Link>
+                        <Link to={`${uid}/followers`}>Followers</Link>
+                        <Link to={`${uid}/following`}>Following</Link>
                     </div>
-                </div>                  
+                    <div className="yourPosts">
+                        <Post display="profile"/>
+                    </div>                 
                 </div>
             )
     }

@@ -20,16 +20,27 @@
   
   // Returns the signed-in user's profile pic URL.
   export function getProfilePicUrl() {
-    return firebase.auth().currentUser.photoURL || "../../images/profileThumb.png";
+    let photoUrl = firebase.auth().currentUser.photoURL
+    
+    if(photoUrl == null){
+      return 'https://firebasestorage.googleapis.com/v0/b/friendly-33b9e.appspot.com/o/profileThumb.png?alt=media&token=51edcc58-6a61-4746-8921-8c820f4de8bf';
+    }else{
+      return photoUrl;
+    }
   }
   
   // Returns the signed-in user's display name.
   export function getUserName() {
-    return firebase.auth().currentUser.displayName || "placeholder_name";
+    return firebase.auth().currentUser.displayName || "Anonymous";
+  }
+
+   // Returns the signed-in user's display name.
+  export function getUserId() {
+    return firebase.auth().currentUser.uid || "placeholder_name";
   }
 
   export function getUserEmail(){
-    return firebase.auth().currentUser.email || "email to be soon"
+    return firebase.auth().currentUser.email || null;
   }
   
   export function isUserSignedIn() {

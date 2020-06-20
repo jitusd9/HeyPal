@@ -1,7 +1,7 @@
 // import * as firebase from 'firebase';
 // import firestore from 'firebase/firestore'
 // Firebase App (the core Firebase SDK) is always required and must be listed first
-import * as firebase from "firebase/app";
+import firebase from "firebase/app";
 
 // If you enabled Analytics in your project, add the Firebase SDK for Analytics
 import "firebase/analytics";
@@ -9,6 +9,7 @@ import "firebase/analytics";
 // Add the Firebase products that you want to use
 import "firebase/auth";
 import "firebase/firestore";
+import 'firebase/storage'
 
 // const settings = {timestampsInSnapshots: true};
 
@@ -23,6 +24,7 @@ const config = {
     measurementId: "G-W4KCS5D2RN"
 };
 firebase.initializeApp(config);
+
 
 // firebase.firestore().settings(settings);
 // const provider = new firebase.auth.GoogleAuthProvider()

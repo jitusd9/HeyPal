@@ -1,86 +1,161 @@
-import React, { Component } from 'react'
-// import loginPic from "../../images/profileThumb.png"
-import firebase from "../../Firebase"
-import Postcard from "../utils/Postcard"
+import React, { Component } from 'react';
+import firebase from "../../Firebase";
+import { getUserId } from "../utils/FirebaseAuth"
+import Postcard from "../utils/Postcard";
+import Loading from './Loading';
+
+
+const timming = (time) => {
+       
+    if(time === null){
+        return 'Loading...';
+    }
+        // Unixtimestamp
+    var unixtimestamp = time.seconds
+    // Months array
+    var months_arr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    // Convert timestamp to milliseconds
+    var date = new Date(unixtimestamp*1000);
+
+    // Year
+    var year = date.getFullYear();
+
+    // Month
+    var month = months_arr[date.getMonth()];
+
+    // Day
+    var day = date.getDate();
+
+    // Hours
+    var hours = date.getHours();
+
+    // Minutes
+    var minutes = "0" + date.getMinutes();
+
+    // Seconds
+    var seconds = "0" + date.getSeconds();
+
+    // AM/PM 
+    var ampm = hours > 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+
+    // Display date time in MM-dd-yyyy h:m:s format
+    var convdataTime = month+'-'+day+'-'+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2) + ' ' + ampm;
+
+    return convdataTime;
+}
+
+const getPhotoUrl = (photoUrl) => {
+   
+    if(photoUrl === null){
+        return 'Loading...'
+    }
+        return photoUrl    
+}
+
 
 export class Post extends Component {
     constructor(props){
         super(props)
-        this.ref = firebase.firestore().collection('post').orderBy("timestamp","desc");
+        
         this.unsubscribe = null;
         this.state = {
-            likeCount : 0,
-            comment : "",
-            addCmt : 0,
-            showCmt : "",
             posts : [],
-            isLoading : true
+            isLoading : true,
+            users : [],
         }
-        this.handleLike = this.handleLike.bind(this)
-        this.handleComment = this.handleComment.bind(this)
-        this.addComment = this.addComment.bind(this)
-        this.saveComment = this.saveComment.bind(this)
     }
 
-    handleLike(){
-        this.setState({
-            likeCount : this.state.likeCount + 1
-        })
-    }
-
-    addComment(){
-        this.setState({
-            addCmt : 1 - this.state.addCmt
-        })
-        console.log(this.state.addCmt);
-        
-    }
-
-    handleComment(e){
-        this.setState({
-            comment : e.target.value,
-        })
-    }
-    
-    saveComment(e){
-        e.preventDefault()        
-        this.setState({
-            showCmt: this.state.comment,
-            addCmt : 1 - this.state.addCmt
-        })
-    }
-
-    onCollectionUpdate = (querySnapshot) =>{
+   onCollectionUpdate = (querySnapshot) =>{
         const posts = [];
         querySnapshot.forEach((doc) => {
-            const {content, name, profilePicUrl, timestamp} = doc.data();
+            let {content, timestamp, photos, userId} = doc.data();
+            
+            let username ;
+            let profileUrl ;
+            this.state.users.forEach(user => {
+                if(user.key === userId){
+                    username = user.username;
+                    profileUrl = user.profileUrl;
+                }
+            })
+            // console.log(username, profileUrl);
+            
+
             posts.push({
                 key: doc.id,
                 content,
-                name,
-                profilePicUrl,
-                timestamp
+                userName : username,
+                profilePicUrl : profileUrl,
+                timestamp : timming(timestamp),
+                photos : getPhotoUrl(photos)
             })
         });
         this.setState({
-            posts
-        })
+            posts,
+            isLoading : false
+        });
+
+        // console.log('user state', this.state.users);
+
     }
 
-    componentDidMount(){
+    // getUserData = (userid) => {
+    //     // let username , profileUrl
+    //     this.state.users.forEach(user => {
+    //         if(user.key === userid){
+    //             return [user.username, user.profileUrl]
+    //         }else{
+    //             return ['username', 'profileUrl']
+               
+    //         }
+    //     })
+        
+    // }
+    
+
+    componentDidMount(){   
+        
+        // get users first 
+        const ref = firebase.firestore().collection('users');
+        const users = [];
+        ref.get().then((doc) => {
+                doc.forEach(user=> {
+
+                    const { username, profileUrl } = user.data();
+                    users.push({
+                        key : user.id,
+                        username : username,
+                        profileUrl : profileUrl,
+                    });
+                    
+                })
+                
+                this.setState({  users })
+            
+        }).catch(err=> console.log('error getting users :', err));
+        
+        if(this.props.display === 'profile') {
+            let userid = getUserId();
+            this.ref = firebase.firestore().collection('posts').where("userId", "==", `${userid}`).orderBy("timestamp", "desc");
+        }else{
+
+            this.ref = firebase.firestore().collection('posts').orderBy("timestamp","desc");
+        }
+        
         this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
-        setTimeout(() => {
-            this.setState({
-                isLoading : false
-            }) 
-        }, 2000);
     }
+
+
 
     render() {
-        if(this.state.isLoading){
+        const { isLoading } = this.state
+        if(isLoading){
             return(
                 <div>
-                    <h2>Loading...</h2>
+                    <Loading />
                 </div>
             )
         }else{
@@ -88,13 +163,12 @@ export class Post extends Component {
                 <div>
                     {this.state.posts.map(post =>
                         <div key={post.key}>
-                            <Postcard profilePicUrl={post.profilePicUrl} timestamp={post.timestamp} name={post.name} content={post.content}/>
+                            <Postcard renderFrom={this.props.display} postKey={post.key} profilePicUrl={post.profilePicUrl} timestamp={post.timestamp} name={post.userName} content={post.content} photos={post.photos}/>
                         </div>
                     )}
                 </div>
             )
         }
-        
     }
 }
 
