@@ -106,7 +106,7 @@ export default class Postcard extends Component {
                    { deleteBtn }
                 </div>
                 <div className={this.state.cmtClass}>
-                    <CommentBox />
+                    <CommentBox postId={this.props.postKey}/>
                 </div>
             </div>
         )

@@ -34,6 +34,12 @@
     return firebase.auth().currentUser.displayName || "Anonymous";
   }
 
+  export function getUserNameFromUid(uid){
+    const ref = firebase.firestore().collection('users');
+    var username = ref.where("userid", "==" , `${uid}`);
+    return username;
+  }
+
    // Returns the signed-in user's display name.
   export function getUserId() {
     return firebase.auth().currentUser.uid || "placeholder_name";

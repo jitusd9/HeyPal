@@ -48,7 +48,6 @@ const timming = (time) => {
 }
 
 
-
 export class Post extends Component {
     constructor(props){
         super(props)
@@ -75,7 +74,6 @@ export class Post extends Component {
                 }
             })
             // console.log(username, profileUrl);
-            
 
             posts.push({
                 key: doc.id,
@@ -114,8 +112,8 @@ export class Post extends Component {
         // get users first 
         const ref = firebase.firestore().collection('users');
         const users = [];
-        ref.get().then((doc) => {
-                doc.forEach(user=> {
+        ref.get().then((docs) => {
+                docs.forEach(user=> {
 
                     const { username, profileUrl } = user.data();
                     users.push({

@@ -54,7 +54,7 @@ export class Addpost extends Component {
 	    }else{
 	        console.log('imageChange Error');
 		}
-		console.log('wait for 3s');
+		console.log('wait for 2s');
 		
 	}
 
@@ -66,7 +66,7 @@ export class Addpost extends Component {
 			// image uplaod
 			const { image } = this.state;
 			const uid = getUserId();
-			console.log('trying get imga', image);
+			console.log('image from state ', image);
 			
 
 			return new Promise((resolve, reject) => {
@@ -97,17 +97,18 @@ export class Addpost extends Component {
 						() => {
 							// complete function
 							this.storage
-								.ref("images")
+								.ref(`images/${uid}`)
 								.child(image.name)
 								.getDownloadURL()
 								.then((url) => {
-									// console.log(url);
+									console.log(url);
 									this.setState({
 										url,
 										image: null,
 									});
 									resolve(url);
-								});
+								})
+								.catch(err => console.log('Error getting Download Url :', err));
 						}
 					);
 

@@ -619,8 +619,8 @@ button:focus{
 .post-card{
   position: relative;
   width: 600px;
+  /* width: 100%; */
   height: auto;
-  /* border: 1px solid #0084a5; */
   /* border-radius: 10px; */
   /* transform: rotate(-5deg); */
   margin: 16px 0;
@@ -822,14 +822,16 @@ background-size: 35px 20px, 100% 100%, 100% 100%;
 }
 
 /* comment box  */
+
 .comment-box{
   position: relative;
   width: 100%;
   padding: 5px;
   margin: 10px auto;
   height: auto;
-  border-top: 2px dashed var(--line);
+  border: 2px dashed var(--line);
   text-align: right;
+  background: var(--bg);
 }
 
 .hide{
@@ -847,6 +849,10 @@ background-size: 35px 20px, 100% 100%, 100% 100%;
   resize: none;
 }
 
+.comment-box button{
+  color: var(--text);
+}
+
 /* show comment  */
 .show-comments{
   width: 100%;
@@ -856,9 +862,6 @@ background-size: 35px 20px, 100% 100%, 100% 100%;
   text-align: left;
 }
 
-.show-comments .comment-tab{
-
-}
 
 .show-comments .comment-tab p{
   margin: 5px;
@@ -873,10 +876,7 @@ background-size: 35px 20px, 100% 100%, 100% 100%;
   width: 100%;
 }
 
-.show-comments .user p{
-  margin-left: 10px;
- 
-}
+
 
 .show-comments .dp{
   background: url('../src/images/profileThumb.png') center center /cover;
@@ -884,9 +884,23 @@ background-size: 35px 20px, 100% 100%, 100% 100%;
   width: 36px;
 }
 
+.show-comments .user p{
+  margin-left: 10px;
+ 
+}
+
 .show-comments .dp img{
   height: 36px;
   width: 36px;
+}
+
+.show-comments .delete-btn{
+  cursor: pointer;
+  position: relative;
+  right: 0;
+  min-width: 20px;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 /* home style  */
@@ -1081,7 +1095,8 @@ background-size: 35px 20px, 100% 100%, 100% 100%;
   }
   /* post cards  */
   .post-card{
-    width: 100%;
+    position: relative;
+    width: 90vw;
     margin: 16px auto;
   }
 
