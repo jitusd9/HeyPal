@@ -857,7 +857,7 @@ background-size: 35px 20px, 100% 100%, 100% 100%;
 .show-comments{
   width: 100%;
   height: auto;
-  /* border: 1px slateblue solid; */
+  border-bottom: 1px solid var(--line);
   background: var(--bg);
   text-align: left;
 }
@@ -1131,8 +1131,8 @@ background-size: 35px 20px, 100% 100%, 100% 100%;
   }
 
   .post-card .dp img{
-    height: 36px;
-    width: 36px;
+    height: 100%;
+    width: 100%;
   }
 
   .post-card .bottom-bar{
