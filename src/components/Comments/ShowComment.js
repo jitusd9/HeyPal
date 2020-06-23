@@ -1,16 +1,32 @@
 import React, {Component} from 'react'
 import firebase from "../../Firebase";
+import { getUserId } from '../utils/FirebaseAuth';
 
 export class ShowComment extends Component {
 
     constructor(props){
         super(props)
+        this.delRef = firebase.firestore().collection("comments").doc(this.props.postId).collection('postComments');
         this.state = {
             users : [],
             comments : [],
             profileUrl: "",
             isLoading : true
         }
+    }
+
+    imgFail = (e) => {
+        console.log(e,' Image failed');
+        
+    }
+
+    deleteComment = (e) => {
+        
+        this.delRef.doc(e.target.id).delete().then(function(){
+            console.log('comment deleted 😥');
+            
+        }).catch(err => console.log('Delete Error 🤔 :', err))
+
     }
 
     onCollectionUpdate = (querySnapshot) =>{
@@ -28,6 +44,7 @@ export class ShowComment extends Component {
 
             comments.push({
                 key: doc.id,
+                userId,
                 content,
                 profileUrl
             })
@@ -67,29 +84,31 @@ export class ShowComment extends Component {
     }
 
     render() {
+
         return (
             <div>
             {
                 this.state.comments.map(comment =>
-                    <div key={comment.key}>
                         
-                        <div className="show-comments">
-                            <div className="comment-tab">
-                                <div className="user">
-                                    <div className="dp">
-                                      {
-                                          comment.profileUrl ? <img src={comment.profileUrl} alt="user_dp"/> : null
-                                      }  
-                                    </div>
-                                    <div className="comment">
-                                        <p>{comment.content}</p>
-                                    </div>
-                                   <div className="delete-btn"> <span role="img" aria-label="delete">🗑</span> </div>
+                    <div className="show-comments" key={comment.key}>
+                        <div className="comment-tab">
+                            <div className="user">
+                                <div className="dp">
+                                    {
+                                        comment.profileUrl ? <img src={comment.profileUrl} onError={this.imgFail} alt="user_dp"/> : null
+                                    }  
                                 </div>
+                                <div className="comment">
+                                    <p>{comment.content}</p>
+                                </div>
+                                { 
+                                    getUserId() === comment.userId ?  <div onClick={this.deleteComment} className="delete-btn"> <span id={comment.key} role="img" aria-label="delete">❌</span> </div> : null
+                                }
                             </div>
                         </div>
-
                     </div>
+
+                   
                     )
             }                    
             </div>

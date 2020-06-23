@@ -870,6 +870,7 @@ background-size: 35px 20px, 100% 100%, 100% 100%;
 }
 
 .show-comments .user{
+  position: relative;
   display: flex;
   align-items: center;
   height: 40px;
@@ -896,7 +897,7 @@ background-size: 35px 20px, 100% 100%, 100% 100%;
 
 .show-comments .delete-btn{
   cursor: pointer;
-  position: relative;
+  position: absolute;
   right: 0;
   min-width: 20px;
   font-size: 20px;
@@ -990,15 +991,11 @@ background-size: 35px 20px, 100% 100%, 100% 100%;
 }
 
 /* SignUp page style  */
-.account{
-  position: absolute;
-  padding-top: 100px;
-}
-
-/* Account css */
 
 .account{
   height: 90vh;
+  position: absolute;
+  padding-top: 100px;
   width: 100%;
   text-align: center;
 }
@@ -1160,14 +1157,18 @@ background-size: 35px 20px, 100% 100%, 100% 100%;
     display: none;
   }
 
-  .account .forms{
-    flex-direction: column;
-    margin: 20px auto;
+  .account{
+    height: auto;
   }
 
+  .account .forms{
+    flex-direction: column;
+  }
+  
   .signin-form,
   .signup-form{
     width: 90%;
+    margin: 20px auto;
   }
   
 }
