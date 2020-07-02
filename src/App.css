@@ -196,10 +196,10 @@ button:focus{
   font-size: 30px;
   z-index: 100;
 }
+
 .themeBtn:focus{
   outline: none;
 }
-
 
 .homeLoading{
   position: absolute;
@@ -410,6 +410,7 @@ button:focus{
   margin: 0 auto;
   padding-top: 80px;
   display: flex;
+  transition: all 0.3s;
   /* align-items: center; */
   /* justify-content: center; */
 }
@@ -811,6 +812,11 @@ background-size: 35px 20px, 100% 100%, 100% 100%;
   color: var(--text);
 }
 
+.previewImage{
+  height: 100px;
+  width: auto;
+}
+
 .post-card .like-btn{
   /* color: red; */
   font-size: 16px;
@@ -1009,7 +1015,7 @@ background-size: 35px 20px, 100% 100%, 100% 100%;
 }
 
 .account .forms >*{
-  /* background: var(--bg); */
+  background: var(--bg);
   height: auto;
   border-radius: 5px;
   box-shadow: var(--neuoshade);

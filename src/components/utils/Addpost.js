@@ -15,6 +15,7 @@ export class Addpost extends Component {
 			progress: 0,
 			imageUploading: false,
 			btnClass: "tert-btn post-btn hide-btn",
+			tempImgSrc : ""
 		};
 	}
 
@@ -42,20 +43,38 @@ export class Addpost extends Component {
 
 	imageChange = (e) => {
 	    if(e.target.files[0]){
-	        const image = e.target.files[0];
+			const image = e.target.files[0];
+			let tempSrc;
+			const reader = new FileReader();
 	        this.setState({
 				image,
-				btnClass : "tert-btn post-btn"
+				btnClass : "tert-btn post-btn",
+				tempImgSrc : ''
 			})
-	        // console.log('image state ', this.state.image.name);
+			
+			// file reader 
+			reader.onloadend = function(){
+				tempSrc = reader.result
+				console.log('tempSrc :', tempSrc);
+			}
+				
+			if(image){
+				reader.readAsDataURL(image);
+			}else{
+				tempSrc = "";
+			}
 
-	        // return this.handleImage();
+			setTimeout(() => {
+				this.setState({
+					tempImgSrc : tempSrc
+				})
+				console.log('tempSrc outside:', tempSrc);
+			}, 1000);
+			
 
 	    }else{
 	        console.log('imageChange Error');
 		}
-		console.log('wait for 2s');
-		
 	}
 
 	handleImage = () => {
@@ -157,6 +176,7 @@ export class Addpost extends Component {
 		}
 		this.setState({
 			btnClass: "tert-btn post-btn hide-btn",
+			tempImgSrc : ""
 		})
 
 		this.handleImage()
@@ -180,11 +200,13 @@ export class Addpost extends Component {
 	};
 
 	render() {
-		const { imageUploading } = this.state;
+		const { imageUploading , tempImgSrc} = this.state;
 
 		let progressBar = imageUploading ? (
 			<progress value={this.state.progress} max="100" />
 		) : null;
+
+		let previewImage = tempImgSrc !== "" ? <img className="previewImage" src={tempImgSrc} alt="preview" /> : null
 
 		return (
 			<div className="post-card">
@@ -197,7 +219,8 @@ export class Addpost extends Component {
 							value={this.state.content}
 							placeholder="type here something..."
 						/>
-						{progressBar}
+						{ previewImage }
+						{ progressBar }
 					</label>
 					<div className="bottom-bar">
 						<label className="tert-btn" htmlFor="img-input">
