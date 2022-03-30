@@ -14,14 +14,14 @@ import 'firebase/storage'
 // const settings = {timestampsInSnapshots: true};
 
 const config = {
-    apiKey: "AIzaSyCnTkmxyA8-h138Ph-CJLuCf30WGheKgiY",
-    authDomain: "friendly-33b9e.firebaseapp.com",
-    databaseURL: "https://friendly-33b9e.firebaseio.com",
-    projectId: "friendly-33b9e",
-    storageBucket: "friendly-33b9e.appspot.com",
-    messagingSenderId: "973846768554",
-    appId: "1:973846768554:web:f04ece764b400eddd099d3",
-    measurementId: "G-W4KCS5D2RN"
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    databaseURL: process.env.REACT_APP_DATABASE_URL,
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_APP_ID,
+    measurementId: process.env.REACT_APP_MEASUREMENT_ID
 };
 firebase.initializeApp(config);
 
